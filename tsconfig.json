@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "target": "es2019",
+    "module": "es2015",
+    "moduleResolution": "node",
+    "outDir": "/dev/null",
+    "skipLibCheck": true,
+
+    "allowJs": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "jsx": "react",
+
+    "strict": false,
+    "downlevelIteration": true,
+    "noImplicitAny": false,
+    "noUnusedLocals": false,
+    "noImplicitReturns": false,
+
+    "baseUrl": "./"     // TODO: delete when tsconfig-paths-webpack-plugin supports this
+  }
+}

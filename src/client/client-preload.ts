@@ -1,9 +1,9 @@
-const { contextBridge } = require('electron')
+import { contextBridge } from 'electron'
+import ipc from 'node-ipc'
 
 const opts = parseArgs(window.process.argv)
 const socketId = opts.get('--socketId')
 
-const ipc = require('node-ipc')
 ipc.config.silent = true
 ipc.config.appspace = opts.get('--socketAppspace')
 

@@ -1,5 +1,5 @@
-// Import from "main world" context
-const { ipcOn, ipcEmit, socketId } = window.myapp
+//@ts-ignore Import from "main world" context
+const { ipcOn, ipcEmit, socketId, uuid } = window.myapp
 
 // State
 const replyHandlers = new Map()
@@ -11,30 +11,29 @@ let connected = false
 ipcOn(socketId, {
   message: (data) => {
     const msg = JSON.parse(data)
-
-    if (msg.type === 'error') {
-      // Up to you whether or not to care about the error
-      const { id } = msg
-      replyHandlers.delete(id)
-    } else if (msg.type === 'reply') {
-      const { id, result } = msg
-
-      const handler = replyHandlers.get(id)
-      if (handler) {
+    switch (msg.type) {
+      case "error": {
+        const { id } = msg
+        replyHandlers.delete(id)
+        // Up to you whether or not to care about the error
+        break
+      }
+      case "reply": {
+        const { id, result } = msg
+        const handler = replyHandlers.get(id)
+        if (!handler) break
         replyHandlers.delete(id)
         handler.resolve(result)
+        break
       }
-    } else if (msg.type === 'push') {
-      const { name, args } = msg
-
-      const listens = listeners.get(name)
-      if (listens) {
-        listens.forEach(listener => {
-          listener(args)
-        })
+      case "push": {
+        const { name, args } = msg
+        const listens = listeners.get(name) ?? []
+        listens.forEach((listener) => listener(args))
+        break
       }
-    } else {
-      throw new Error('Unknown message type: ' + JSON.stringify(msg))
+      default:
+        throw new Error("Unknown message type: " + JSON.stringify(msg))
     }
   },
 
@@ -42,25 +41,23 @@ ipcOn(socketId, {
     connected = true
 
     // Send any messages that were queued while closed
-    if (messageQueue.length > 0) {
-      messageQueue.forEach(msg => client.emit('message', msg))
-      messageQueue = []
-    }
+    messageQueue.forEach((msg) => ipcEmit(socketId, "message", msg))
+    messageQueue = []
 
     // onOpen(client)
   },
 
   disconnect: () => {
     connected = false
-  }
+  },
 })
 
-function send(name, args) {
-  return new Promise((resolve, reject) => {
-    let id = window.myapp.uuid.v4()
+export function send(name, args) {
+  return new Promise<any>((resolve, reject) => {
+    let id = uuid.v4()
     replyHandlers.set(id, { resolve, reject })
     if (connected) {
-      ipcEmit(socketId, 'message', JSON.stringify({ id, name, args }))
+      ipcEmit(socketId, "message", JSON.stringify({ id, name, args }))
     } else {
       messageQueue.push(JSON.stringify({ id, name, args }))
     }
@@ -68,14 +65,15 @@ function send(name, args) {
 }
 
 function listen(name, cb) {
-  if (!listeners.get(name)) {
-    listeners.set(name, [])
-  }
+  if (!listeners.get(name)) listeners.set(name, [])
   listeners.get(name).push(cb)
 
   return () => {
     let arr = listeners.get(name)
-    listeners.set(name, arr.filter(cb_ => cb_ !== cb))
+    listeners.set(
+      name,
+      arr.filter((cb_) => cb_ !== cb)
+    )
   }
 }
 

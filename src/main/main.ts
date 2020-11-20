@@ -1,7 +1,13 @@
-const { app, BrowserWindow } = require('electron')
-const { fork } = require('child_process')
-const isDev = require('electron-is-dev')
-const fs = require('fs')
+import { app, BrowserWindow } from "electron"
+import { fork } from "child_process"
+import isDev from "electron-is-dev"
+import fs from "fs"
+import path from "path"
+
+declare const CLIENT_WEBPACK_ENTRY: string
+declare const CLIENT_PRELOAD_WEBPACK_ENTRY: string
+declare const SERVER_WEBPACK_ENTRY: string
+const SERVER_NODE_SCRIPT = path.join(__dirname, "/server.js")
 
 let clientWin
 let serverWin
@@ -15,15 +21,17 @@ function createWindow(args) {
       nodeIntegration: false,
       contextIsolation: true,
       additionalArguments: args,
-      preload: __dirname + '/client-preload.js'
-    }
+      preload: CLIENT_PRELOAD_WEBPACK_ENTRY,
+    },
   })
 
-  clientWin.loadFile('client-index.html')
+  const load = isDev ? clientWin.loadURL : clientWin.loadFile
+  console.log("createWindow", load, CLIENT_WEBPACK_ENTRY)
+  clientWin.loadURL(CLIENT_WEBPACK_ENTRY)
 }
 
 function createBackgroundWindow(args) {
-  const win = new BrowserWindow({
+  serverWin = new BrowserWindow({
     x: 500,
     y: 300,
     width: 700,
@@ -33,22 +41,20 @@ function createBackgroundWindow(args) {
       nodeIntegration: true,
       contextIsolation: false,
       additionalArguments: args,
-    }
+    },
   })
-  win.loadURL(`file://${__dirname}/server-dev.html`)
-
-  serverWin = win
+  serverWin.loadURL(SERVER_WEBPACK_ENTRY)
 }
 
 function createBackgroundProcess(args) {
-  serverProcess = fork(__dirname + '/server.js', ['--subprocess', ...args])
-  serverProcess.on('message', msg => { console.log("index", msg) })
+  serverProcess = fork(SERVER_NODE_SCRIPT, ["--subprocess", ...args])
+  serverProcess.on("message", (msg) => console.log("index", msg))
 }
 
 const socketAppspace = `myapp.${process.pid}.`
 const socketId = "server"
 
-app.on('ready', async () => {
+app.on("ready", async () => {
   const args = [
     `--appVersion=${app.getVersion()}`,
     `--socketAppspace=${socketAppspace}`,
@@ -65,12 +71,12 @@ app.on('ready', async () => {
   }
 })
 
-app.on('before-quit', () => {
+app.on("before-quit", () => {
   if (serverProcess) {
     serverProcess.kill()
     serverProcess = null
   }
   // cleanup: remove socket after use
   const socketPath = `/tmp/${socketAppspace}${socketId}`
-  fs.unlinkSync(socketPath)
+  if (fs.existsSync(socketPath)) fs.unlinkSync(socketPath)
 })

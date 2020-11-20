@@ -1,0 +1,49 @@
+{
+  "plugins": [
+    [
+      "@electron-forge/plugin-webpack",
+      {
+        "mainConfig": "./config/webpack.main.config.js",
+        "renderer": {
+          "config": "./config/webpack.renderers.config.js",
+          "entryPoints": [
+            {
+              "name": "client",
+              "html": "./src/client/client-index.html",
+              "js": "./src/client/client-app.ts",
+              "preload": {
+                "js": "./src/client/client-preload.ts"
+              }
+            },
+            {
+              "name": "server",
+              "html": "./src/server/server-dev.html",
+              "js": "./src/server/server.ts"
+            }
+          ]
+        }
+      }
+    ]
+  ],
+  "make_targets": {
+    "win32": ["squirrel"],
+    "darwin": ["zip"],
+    "linux": ["deb", "rpm"]
+  },
+  "electronPackagerConfig": {
+    "packageManager": "yarn"
+  },
+  "electronWinstallerConfig": {
+    "name": "electron_with_server_example"
+  },
+  "electronInstallerDebian": {},
+  "electronInstallerRedhat": {},
+  "github_repository": {
+    "owner": "",
+    "name": ""
+  },
+  "windowsStoreConfig": {
+    "packageName": "",
+    "name": "electronwithserverexample"
+  }
+}

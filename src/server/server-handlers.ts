@@ -1,24 +1,24 @@
-let handlers = {}
+const handlers = {
+  _history: [],
 
-handlers._history = []
+  "make-factorial": async ({ num }) => {
+    handlers._history.push(num)
 
-handlers['make-factorial'] = async ({ num }) => {
-  handlers._history.push(num)
-
-  function fact(n) {
-    if (n === 1) {
-      return 1
+    function fact(n) {
+      if (n === 1) {
+        return 1
+      }
+      return n * fact(n - 1)
     }
-    return n * fact(n - 1)
-  }
 
-  console.log('making factorial')
-  return fact(num)
+    console.log("making factorial")
+    return fact(num)
+  },
+
+  "ring-ring": async () => {
+    console.log("picking up the phone")
+    return "hello!"
+  },
 }
 
-handlers['ring-ring'] = async () => {
-  console.log('picking up the phone')
-  return 'hello!'
-}
-
-module.exports = handlers
+export default handlers

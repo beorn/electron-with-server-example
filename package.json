@@ -1,15 +1,43 @@
 {
   "name": "electron-with-server-example",
+  "productName": "electron-with-server-example",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": ".webpack/main/index.js",
   "license": "MIT",
+  "scripts": {
+    "start": "electron-forge start",
+    "package": "electron-forge package",
+    "make": "electron-forge make",
+    "publish": "electron-forge publish"
+  },
   "dependencies": {
-    "electron": "^11.0.0",
     "electron-is-dev": "^1.2.0",
+    "electron-squirrel-startup": "^1.0.0",
     "node-ipc": "^9.1.3",
     "uuid": "^8.3.1"
   },
-  "scripts": {
-    "start": "electron ."
+  "devDependencies": {
+    "@electron-forge/cli": "6.0.0-beta.54",
+    "@electron-forge/maker-deb": "6.0.0-beta.54",
+    "@electron-forge/maker-rpm": "6.0.0-beta.54",
+    "@electron-forge/maker-squirrel": "6.0.0-beta.54",
+    "@electron-forge/maker-zip": "6.0.0-beta.54",
+    "@electron-forge/plugin-webpack": "6.0.0-beta.54",
+    "@marshallofsound/webpack-asset-relocator-loader": "^0.5.0",
+    "@types/electron": "^1.6.10",
+    "@types/node": "^14.14.9",
+    "@types/webpack-env": "^1.15.3",
+    "css-loader": "^5.0.1",
+    "electron": "11.0.2",
+    "fork-ts-checker-webpack-plugin": "^6.0.3",
+    "node-loader": "^1.0.2",
+    "style-loader": "^2.0.0",
+    "ts-loader": "^8.0.11",
+    "tsconfig-paths-webpack-plugin": "^3.3.0",
+    "typescript": "^4.1.2",
+    "url-loader": "^4.1.1"
+  },
+  "config": {
+    "forge": "./config/forge.json"
   }
 }
