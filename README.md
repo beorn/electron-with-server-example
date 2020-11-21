@@ -1,10 +1,10 @@
 # electron-with-server-example
 
-Updated version [@jlongster](https://github.com/jlongster)'s [example Electron app with server process as Node or background window](https://jlongster.com/secret-of-good-electron-apps) with some improvements:
+Updated version [@jlongster](https://github.com/jlongster)'s [example Electron app with server process as Node or background window](https://jlongster.com/secret-of-good-electron-apps) with some improvements (see [PR#8](https://github.com/jlongster/electron-with-server-example/pull/8)):
 
  - updated to latest versions of all packages (as of 2020-11-20), including Electorn 11
  - use of [contextIsolation](https://www.electronjs.org/docs/tutorial/security#3-enable-context-isolation-for-remote-content), [contextBridge](https://www.electronjs.org/docs/api/context-bridge), and preload script to create safer environment for the client code
- - various refactorings (see [PR#8](https://github.com/jlongster/electron-with-server-example/pull/8))
+ - various refactorings
 
 Two versions are provided:
 
