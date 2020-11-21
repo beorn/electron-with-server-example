@@ -11,7 +11,7 @@ Two versions are provided:
  - [master] - electron-forge + TypeScript + Webpack version
  - [feat/electron11-modern] - updated plain JS version
 
-The electron-forge version utilizies the webpack-plugin's ability to produce different bundles for multiple renderer processes and the preload scripts - see [forge.json](config/forge.json) and [render config](config/webpack.renderers.config.js).
+The electron-forge version utilizies the webpack-plugin's ability to produce different bundles for multiple node process (main and server-as-process), multiple renderer processes (client and server-as-window) and the preload scripts (client contextBridge) - see [forge config](config/forge.config.jsn), [render config](config/webpack.renderers.config.js), and [main config](config/webpack.main.config.js).
 
 [master]: https://github.com/beorn/electron-with-server-example/
 
