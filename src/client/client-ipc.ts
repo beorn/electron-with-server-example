@@ -64,12 +64,12 @@ export function send(name, args) {
   })
 }
 
-function listen(name, cb) {
-  if (!listeners.get(name)) listeners.set(name, [])
-  listeners.get(name).push(cb)
+export function listen(name, cb) {
+  const arr = listeners.get(name) ?? []
+  listeners.set(name, arr.concat(cb))
 
   return () => {
-    let arr = listeners.get(name)
+    const arr = listeners.get(name) ?? []
     listeners.set(
       name,
       arr.filter((cb_) => cb_ !== cb)
@@ -77,6 +77,6 @@ function listen(name, cb) {
   }
 }
 
-function unlisten(name) {
+export function unlisten(name) {
   listeners.set(name, [])
 }

@@ -46,5 +46,6 @@ export function init(socketAppspace, socketId, handlers) {
 }
 
 export function send(name, args) {
+  console.log("sending", name, args)
   ipc.server.broadcast("message", JSON.stringify({ type: "push", name, args }))
 }
