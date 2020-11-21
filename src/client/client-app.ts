@@ -1,10 +1,13 @@
 //@ts-ignore Import from "main world" context
 const { appVersion, isDev } = window.myapp
-import { send } from "./client-ipc"
+import { send, listen } from "./client-ipc"
 
 console.log("client", appVersion, isDev)
 
 const output = document.querySelector("#output")
+listen("heartbeat", (args) => {
+  console.log("got server-push heartbeat:", args)
+})
 
 document.querySelector("#factorial").addEventListener("click", async () => {
   const result = await send("make-factorial", { num: 5 })
