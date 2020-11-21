@@ -2,7 +2,11 @@ const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin')
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin')
 
 module.exports = {
-  entry: './src/main/main.ts',
+  entry: {
+    index: './src/main/main.ts',
+    server: './src/server/server.ts'
+  },
+  output: { filename: '[name].js' },
 
   module: { rules: require('./webpack.rules'), },
 

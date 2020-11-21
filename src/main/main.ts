@@ -4,16 +4,19 @@ import isDev from "electron-is-dev"
 import fs from "fs"
 import path from "path"
 
+// defined by electron-forge webpack plugin
 declare const CLIENT_WEBPACK_ENTRY: string
 declare const CLIENT_PRELOAD_WEBPACK_ENTRY: string
 declare const SERVER_WEBPACK_ENTRY: string
-const SERVER_NODE_SCRIPT = path.join(__dirname, "/server.js")
+// server as node sub-process or background BrowserWindow
+const SERVER_PROCESS_SCRIPT = path.join(__dirname, "server.js")
+const createServer = isDev ? createBackgroundWindow : createBackgroundProcess
 
 let clientWin
 let serverWin
 let serverProcess
 
-function createWindow(args) {
+function createClient(args) {
   clientWin = new BrowserWindow({
     width: 800,
     height: 600,
@@ -47,7 +50,7 @@ function createBackgroundWindow(args) {
 }
 
 function createBackgroundProcess(args) {
-  serverProcess = fork(SERVER_NODE_SCRIPT, ["--subprocess", ...args])
+  serverProcess = fork(SERVER_PROCESS_SCRIPT, ["--subprocess", ...args])
   serverProcess.on("message", (msg) => console.log("index", msg))
 }
 
@@ -62,13 +65,8 @@ app.on("ready", async () => {
   ]
   if (isDev) args.push("--isDev")
 
-  createWindow(args)
-
-  if (isDev) {
-    createBackgroundWindow(args)
-  } else {
-    createBackgroundProcess(args)
-  }
+  createClient(args)
+  createServer(args)
 })
 
 app.on("before-quit", () => {
